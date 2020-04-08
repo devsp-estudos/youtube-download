@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download YouTube</title>
+
+    <style>
+        body {
+            text-align: center;
+        }
+
+        input {
+            width: 60%;
+            padding: 4px;
+        }
+
+        button {
+            padding: 4px 10px;
+            margin-left: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Baixar video do youtube</h1>
+
+    <div>
+        <input id="input-url" placeholder="Insira a URL: " type="text">
+        <button onclick="baixar()">Download</button>
+    </div>
+
+    <h4 id='nome-video'></h4>
+</body>
+
+<script>
+    function baixar() {
+        const url = document.getElementById('input-url').value
+
+        if (url === '') return
+
+        fetch('http://localhost:3013/download', {
+            method: 'POST',
+            headers: { 'Content-Type': 'Application/json' },
+            body: JSON.stringify({ url })
+        }).then(res => res.json()).then(res => {
+            document.getElementById('nome-video').innerHTML = 'Download Concluido - ' + res.video
+            setTimeout(() => {
+                window.open(`http://localhost:3013/${res.video}`, res.video)
+            }, 1000)
+        })
+    }
+</script>
+
+</html>
