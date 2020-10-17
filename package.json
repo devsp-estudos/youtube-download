@@ -12,6 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "ytdl-core": "^2.0.1"
+    "ytdl-core": "^3.4.1"
   }
 }
