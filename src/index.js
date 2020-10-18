@@ -2,6 +2,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const path = require('path')
 const downloadVideo = require('./download')
+const getInfo = require('./getInfo')
+
 
 // servidor
 const app = express()
@@ -13,6 +15,14 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'videos')))
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'frontend/index.html')))
+
+app.get('/getInfo', (req, res) => {
+    const URL = req.query.v
+
+    const finish = obj => res.status(200).json(obj)
+
+    getInfo(URL, finish)
+})
 
 app.post('/download', async (req, res) => {
     try {

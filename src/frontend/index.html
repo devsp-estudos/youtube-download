@@ -28,15 +28,31 @@
 
     <div>
         <input id="input-url" placeholder="Insira a URL: " type="text">
-        <button onclick="baixar()">Download</button>
+        <button onclick="getInfo()">Add</button>
+        <button onclick="download()">Download</button>
     </div>
 
-    <h4 id='nome-video'></h4>
+    <ul id="lista-videos">
+
+    </ul>
 </body>
 
 <script>
-    function baixar() {
-        const url = document.getElementById('input-url').value
+    const inputUrl = document.getElementById('input-url')
+    const listaVideos = document.getElementById('lista-videos')
+    const arrayDownload = []
+
+    function getInfo() {
+        fetch(`http://localhost:3013/getInfo?v=${inputUrl.value}`)
+            .then(res => res.json())
+            .then(res => {
+                console.log(res)
+                addVideo(res)
+            })
+    }
+
+    function download() {
+        const url = inputUrl.value
 
         if (url === '') return
 
