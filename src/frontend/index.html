@@ -8,6 +8,7 @@
 
     <style>
         body {
+            background-color: white;
             text-align: center;
         }
 
@@ -19,6 +20,41 @@
         button {
             padding: 4px 10px;
             margin-left: 6px;
+        }
+
+        ul {
+            padding: 0;
+            width: 60%;
+            margin: auto;
+            margin-top: 30px;
+            list-style: none;
+        }
+
+        li {
+            margin-top: 10px;
+            background-color: rgb(204, 229, 255);
+            border-radius: 8px;
+            display: flex;
+            padding: 10px;
+        }
+
+        li img {
+            width: 120px;
+            margin-right: 20px;
+        }
+
+        li div {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        li div span {
+            margin-top: 10px;
+        }
+
+        li div button {
+            width: 100px;
         }
     </style>
 </head>
@@ -40,31 +76,79 @@
 <script>
     const inputUrl = document.getElementById('input-url')
     const listaVideos = document.getElementById('lista-videos')
-    const arrayDownload = []
+
+    const getArray = JSON.parse(localStorage.getItem('lista-videos'))
+    let arrayDownload = getArray || []
+
+    arrayDownload.forEach(objVideo => {
+        const liVideo = newVideoLi(objVideo)
+        listaVideos.innerHTML += liVideo
+    })
+
+    const salvarLista = array => localStorage.setItem('lista-videos', JSON.stringify(array))
 
     function getInfo() {
         fetch(`http://localhost:3013/getInfo?v=${inputUrl.value}`)
             .then(res => res.json())
-            .then(res => {
-                console.log(res)
-                addVideo(res)
+            .then(objInfo => {
+                console.log(objInfo)
+                addVideo(objInfo)
             })
     }
 
+    function newVideoLi(objVideo) {
+        const { id, title, thumbnail } = objVideo
+
+        return `
+            <li id="${id}">
+                <img src="${thumbnail}" alt="thumbnail video">
+                <div>
+                    <span>${title}</span>
+                    <button onclick="delVideo(this)">Deletar</button>
+                </div>
+            </li>
+        `
+    }
+
+    function addVideo(objVideo) {
+        arrayDownload.push(objVideo)
+        salvarLista(arrayDownload)
+
+        const liVideo = newVideoLi(objVideo)
+
+        listaVideos.innerHTML += liVideo
+    }
+
+    function delVideo(element) {
+        // const id = element.id
+        console.log(element)
+        // console.log(id)
+
+        // arrayDownload = arrayDownload.filter(obj => obj.id !== id)
+        // salvarLista(arrayDownload)
+        // console.log(arrayDownload)
+
+        // listaVideos.removeChild(element)
+    }
+
     function download() {
-        const url = inputUrl.value
+        arrayDownload.forEach(async obj => {
 
-        if (url === '') return
+            const { url, title } = obj
 
-        fetch('http://localhost:3013/download', {
-            method: 'POST',
-            headers: { 'Content-Type': 'Application/json' },
-            body: JSON.stringify({ url })
-        }).then(res => res.json()).then(res => {
-            document.getElementById('nome-video').innerHTML = 'Download Concluido - ' + res.video
-            setTimeout(() => {
-                window.open(`http://localhost:3013/${res.video}`, res.video)
-            }, 1000)
+            const chamada = await fetch('http://localhost:3013/download', {
+                method: 'POST',
+                headers: { 'Content-Type': 'Application/json' },
+                body: JSON.stringify({ url, title })
+            })
+
+            const dados = await chamada.json()
+
+            console.log('Download Concluido - ' + dados.video)
+
+            // setTimeout(() => {
+            //     window.open(`http://localhost:3013/${res.video}`, res.video)
+            // }, 1000)
         })
     }
 </script>

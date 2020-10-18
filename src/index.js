@@ -29,7 +29,7 @@ app.get('/getInfo', (req, res) => {
 app.post('/download', async (req, res) => {
     try {
         const finish = obj => res.status(200).json(obj)
-        downloadVideo(req.body.url, finish)
+        downloadVideo(req.body, finish)
     } catch (error) {
         res.sendStatus(500).json(error)
     }

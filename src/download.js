@@ -2,16 +2,15 @@ const fs = require("fs")
 const ytdl = require("ytdl-core")
 
 
-async function downloadVideo(URL, finish) {
+async function downloadVideo(obj, finish) {
 
-    const info = await ytdl.getInfo(URL.replace('https://www.youtube.com/watch?v=', ''))
-    console.log('titulo: ', info.title)
-    const titleVideo = info.title.replace('/', '|')
-    console.log('titulo replace: ', titleVideo)
+    // const info = await ytdl.getInfo(URL.replace('https://www.youtube.com/watch?v=', ''))
 
-    const video = ytdl(URL)
+    // const titleVideo = info.title
 
-    video.pipe(fs.createWriteStream(`src/videos/${titleVideo}.mp4`))
+    const video = ytdl(obj.url)
+
+    video.pipe(fs.createWriteStream(`src/videos/${obj.title}.mp4`))
 
     let starttime = 0
     video.once("response", () => starttime = Date.now())
@@ -38,7 +37,7 @@ async function downloadVideo(URL, finish) {
         }
     })
 
-    video.on('finish', () => finish({ video: `${titleVideo}.mp4` }))
+    video.on('finish', () => finish({ video: `${obj.title}.mp4` }))
 }
 
 module.exports = downloadVideo
